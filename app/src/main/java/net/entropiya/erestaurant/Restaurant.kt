@@ -3,11 +3,12 @@ package net.entropiya.erestaurant
 data class Restaurant(
     val id: Int,
     val title: String,
-    val description: String
+    val description: String,
+    var isFavorite: Boolean = false
 )
 
 val dummyRestaurants = listOf(
-    Restaurant(0, "Alfredo's dishes", "At Alfredo's, we provide the best seafood dishes."),
+    Restaurant(0, "Alfredo's dishes", "At Alfredo's, we provide the best seafood dishes.", isFavorite = true),
     Restaurant(1, "Jamie's burgers", "At Jamie's, we serve the best meat and vegan burgers!"),
     Restaurant(2, "Pizza John", "Get the best pizza in town. We also serve vegan burgers!"),
     Restaurant(3, "Dinner in the clouds", "At DitC, you can experience the full immersive dining experience." ),
