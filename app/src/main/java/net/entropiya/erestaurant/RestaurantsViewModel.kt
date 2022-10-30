@@ -5,23 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
-    private var restInterface: RestaurantsApiService
+    private var restInterface = initRetrofit()
     val state = mutableStateOf(emptyList<Restaurant>())
-
-    private val errorHandler = CoroutineExceptionHandler { _, exception ->
-        exception.printStackTrace()
-    }
+    private val errorHandler = CoroutineExceptionHandler { _, exception -> exception.printStackTrace() }
 
     init {
-        val retrofit: Retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://erestaurant-bfd3d-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .build()
-        restInterface = retrofit.create(RestaurantsApiService::class.java)
         getRestaurants()
     }
 

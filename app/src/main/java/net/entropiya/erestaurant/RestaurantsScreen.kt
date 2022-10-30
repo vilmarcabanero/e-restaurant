@@ -2,6 +2,7 @@ package net.entropiya.erestaurant
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,28 +34,34 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import net.entropiya.erestaurant.ui.theme.ERestaurantTheme
 
 @Composable
-fun RestaurantsScreen() {
+fun RestaurantsScreen(onItemClick: (id: Int) -> Unit = { }) {
     val viewModel: RestaurantsViewModel = viewModel()
     LazyColumn(
         modifier = Modifier.background(MaterialTheme.colors.background),
-        contentPadding = PaddingValues(
-            vertical = 8.dp,
-        ),
     ) {
         items(viewModel.state.value) { restaurant ->
-            RestaurantItem(restaurant) { id ->
-                viewModel.toggleFavorite(id)
-            }
+            RestaurantItem(
+                restaurant,
+                onFavoriteClick = { id -> viewModel.toggleFavorite(id) },
+                onItemClick = { id -> onItemClick(id) })
         }
     }
 }
 
 @Composable
-fun RestaurantItem(item: Restaurant, onClick: (id: Int) -> Unit) {
+fun RestaurantItem(
+    item: Restaurant,
+    onFavoriteClick: (id: Int) -> Unit,
+    onItemClick: (id: Int) -> Unit
+) {
     val icon = if (item.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
     Card(
-        modifier = Modifier.padding(vertical = 4.dp),
+        modifier = Modifier
+            .clickable {
+                onItemClick(item.id)
+            },
         shape = RoundedCornerShape(0.dp)
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -64,21 +71,20 @@ fun RestaurantItem(item: Restaurant, onClick: (id: Int) -> Unit) {
                 Icons.Filled.Place,
                 Modifier
                     .weight(0.15f)
-                    .align(alignment = Alignment.Top)
             )
             RestaurantDetails(
                 item,
                 Modifier.weight(0.70f)
             )
             FavoriteIcon(icon, Modifier.weight(0.15f), item.isFavorite) {
-                onClick(item.id)
+                onFavoriteClick(item.id)
             }
         }
     }
 }
 
 @Composable
-private fun RestaurantIcon(
+fun RestaurantIcon(
     icon: ImageVector,
     modifier: Modifier
 ) {
@@ -92,8 +98,12 @@ private fun RestaurantIcon(
 }
 
 @Composable
-private fun RestaurantDetails(item: Restaurant, modifier: Modifier) {
-    Column(modifier = modifier) {
+fun RestaurantDetails(
+    item: Restaurant,
+    modifier: Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
+) {
+    Column(modifier = modifier, horizontalAlignment = horizontalAlignment) {
         Text(
             text = item.title,
             style = MaterialTheme.typography.h6
