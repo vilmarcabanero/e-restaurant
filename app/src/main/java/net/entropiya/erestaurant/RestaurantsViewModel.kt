@@ -3,25 +3,25 @@ package net.entropiya.erestaurant
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
     private var restInterface: RestaurantsApiService
     val state = mutableStateOf(emptyList<Restaurant>())
-    private lateinit var restaurantsCall: Call<List<Restaurant>>
+
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        exception.printStackTrace()
+    }
+
     init {
-        val retrofit: Retrofit = Retrofit.Builder().addConverterFactory(
-            GsonConverterFactory.create()
-        ).baseUrl(
-            "https://erestaurant-bfd3d-default-rtdb.asia-southeast1.firebasedatabase.app/"
-        ).build()
-        restInterface = retrofit.create(
-            RestaurantsApiService::class.java
-        )
+        val retrofit: Retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://erestaurant-bfd3d-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .build()
+        restInterface = retrofit.create(RestaurantsApiService::class.java)
         getRestaurants()
     }
 
@@ -57,26 +57,15 @@ class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewMode
     }
 
     private fun getRestaurants() {
-        restaurantsCall = restInterface.getRestaurants()
-        restaurantsCall.enqueue(object : Callback<List<Restaurant>> {
-            override fun onResponse(
-                call: Call<List<Restaurant>>, response: Response<List<Restaurant>>
-            ) {
-                response.body()?.let { restaurants ->
-                    state.value = restaurants.restoreSelections()
-                }
-            }
-
-            override fun onFailure(
-                call: Call<List<Restaurant>>, t: Throwable
-            ) {
-                t.printStackTrace()
-            }
-        })
+        viewModelScope.launch(errorHandler) {
+            val restaurants = getRemoteRestaurants()
+            state.value = restaurants.restoreSelections()
+        }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        restaurantsCall.cancel()
+    private suspend fun getRemoteRestaurants(): List<Restaurant> {
+        return withContext(Dispatchers.IO) {
+            restInterface.getRestaurants()
+        }
     }
 }
