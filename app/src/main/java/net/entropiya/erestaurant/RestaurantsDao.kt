@@ -8,7 +8,7 @@ import androidx.room.Update
 
 @Dao
 interface RestaurantsDao {
-    @Query("SELECT * from restaurants")
+    @Query("SELECT * FROM restaurants")
     suspend fun getAll(): List<Restaurant>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -22,4 +22,7 @@ interface RestaurantsDao {
 
     @Query("SELECT * FROM restaurants WHERE is_favorite = 1")
     suspend fun getAllFavorited(): List<Restaurant>
+
+    @Query("SELECT * FROM restaurants WHERE r_id=:id")
+    suspend fun findOne(id: Int): Restaurant?
 }
