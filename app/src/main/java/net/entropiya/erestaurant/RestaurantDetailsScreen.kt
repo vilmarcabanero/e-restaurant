@@ -18,28 +18,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun RestaurantDetailsScreen() {
     val viewModel: RestaurantDetailsViewModel = viewModel()
-    val item = viewModel.state.value
-    item?.let {
-        Surface(modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxSize()) {
+    val state = viewModel.state.value
+    state.restaurant?.let {
+        Surface(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()
+        ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
+                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
                 RestaurantIcon(
-                    Icons.Filled.Place,
-                    Modifier.padding(
-                        top = 32.dp,
-                        bottom = 32.dp
+                    Icons.Filled.Place, Modifier.padding(
+                        top = 32.dp, bottom = 32.dp
                     )
                 )
                 RestaurantDetails(
-                    item,
-                    Modifier.padding(bottom = 32.dp),
-                    Alignment.CenterHorizontally
+                    it, Modifier.padding(bottom = 32.dp), Alignment.CenterHorizontally
                 )
                 Text("More info coming soon!")
             }

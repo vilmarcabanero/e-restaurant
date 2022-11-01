@@ -12,11 +12,3 @@ interface RestaurantsApiService {
     @GET("restaurants.json?orderBy=\"r_id\"")
     suspend fun getRestaurant(@Query("equalTo") id: Int): Map<String, Restaurant>
 }
-
-fun initRetrofit(): RestaurantsApiService {
-    val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl("https://erestaurant-bfd3d-default-rtdb.asia-southeast1.firebasedatabase.app/")
-        .build()
-    return retrofit.create(RestaurantsApiService::class.java)
-}
