@@ -19,6 +19,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        resConfigs "en" // Less 100kb
     }
 
     buildTypes {
