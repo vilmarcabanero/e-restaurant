@@ -6,7 +6,7 @@ class GetInitialRestaurantsUseCase {
     private val repository = RestaurantsRepository()
     private val getSortedRestaurantsUseCase = GetSortedRestaurantsUseCase()
     suspend operator fun invoke(): List<Restaurant> {
-        repository.loadRestaurants()
+        if (repository.getRestaurants().isEmpty()) repository.loadRestaurants()
         return getSortedRestaurantsUseCase()
     }
 }

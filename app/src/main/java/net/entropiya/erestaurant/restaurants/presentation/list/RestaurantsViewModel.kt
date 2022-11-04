@@ -27,6 +27,7 @@ class RestaurantsViewModel : ViewModel() {
 
     init {
         getRestaurants()
+//        _state = _state.copy( error = "Latus Rectum")
     }
 
     fun toggleFavorite(id: Int, oldValue: Boolean) {
@@ -39,7 +40,6 @@ class RestaurantsViewModel : ViewModel() {
     }
 
     private fun getRestaurants() {
-        println("getRestaurants()")
         viewModelScope.launch(errorHandler) {
             _state = _state.copy(isLoading = true)
             val restaurants = getRestaurantsUseCase()
