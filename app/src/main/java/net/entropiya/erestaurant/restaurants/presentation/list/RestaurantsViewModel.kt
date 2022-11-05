@@ -5,14 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import net.entropiya.erestaurant.restaurants.domain.GetInitialRestaurantsUseCase
 import net.entropiya.erestaurant.restaurants.domain.ToggleRestaurantUseCase
+import javax.inject.Inject
 
-class RestaurantsViewModel : ViewModel() {
-    private val getRestaurantsUseCase = GetInitialRestaurantsUseCase()
-    private val toggleRestaurantsUseCase = ToggleRestaurantUseCase()
+@HiltViewModel
+class RestaurantsViewModel @Inject constructor(
+    private val getRestaurantsUseCase: GetInitialRestaurantsUseCase, private val toggleRestaurantsUseCase: ToggleRestaurantUseCase
+) : ViewModel() {
     private var _state by mutableStateOf(
         RestaurantsScreenState()
     )
@@ -26,8 +29,7 @@ class RestaurantsViewModel : ViewModel() {
     }
 
     init {
-        getRestaurants()
-//        _state = _state.copy( error = "Latus Rectum")
+        getRestaurants() //        _state = _state.copy( error = "Latus Rectum")
     }
 
     fun toggleFavorite(id: Int, oldValue: Boolean) {
@@ -40,10 +42,9 @@ class RestaurantsViewModel : ViewModel() {
     }
 
     private fun getRestaurants() {
-        viewModelScope.launch(errorHandler) {
-            _state = _state.copy(isLoading = true)
+        viewModelScope.launch(errorHandler) { //            _state = _state.copy(isLoading = true)
             val restaurants = getRestaurantsUseCase()
-            _state = _state.copy(restaurants = restaurants, isLoading = false)
+            _state = _state.copy(restaurants = restaurants)
         }
     }
 }

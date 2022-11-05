@@ -6,6 +6,7 @@ import net.entropiya.erestaurant.restaurants.domain.Restaurant
 import net.entropiya.erestaurant.RestaurantsApplication
 import net.entropiya.erestaurant.restaurants.data.local.LocalRestaurant
 import net.entropiya.erestaurant.restaurants.data.local.PartialLocalRestaurant
+import net.entropiya.erestaurant.restaurants.data.local.RestaurantsDao
 import net.entropiya.erestaurant.restaurants.data.local.RestaurantsDb
 import net.entropiya.erestaurant.restaurants.data.remote.RestaurantsApiService
 import retrofit2.HttpException
@@ -13,13 +14,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.ConnectException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class RestaurantsRepository {
-    private val restInterface = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-        .baseUrl("https://erestaurant-bfd3d-default-rtdb.asia-southeast1.firebasedatabase.app/").build()
-        .create(RestaurantsApiService::class.java)
-
-    private val restaurantsDao = RestaurantsDb.getDaoInstance(RestaurantsApplication.getAppContext())
+class RestaurantsRepository @Inject constructor(
+    private val restInterface: RestaurantsApiService, private val restaurantsDao: RestaurantsDao
+) {
 
     suspend fun loadRestaurants() {
         return withContext(Dispatchers.IO) {

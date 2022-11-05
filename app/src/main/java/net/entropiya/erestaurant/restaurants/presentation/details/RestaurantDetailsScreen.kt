@@ -18,9 +18,7 @@ import net.entropiya.erestaurant.restaurants.presentation.list.RestaurantDetails
 import net.entropiya.erestaurant.restaurants.presentation.list.RestaurantIcon
 
 @Composable
-fun RestaurantDetailsScreen() {
-    val viewModel: RestaurantDetailsViewModel = viewModel()
-    val state = viewModel.state
+fun RestaurantDetailsScreen(state: RestaurantDetailsScreenState) {
     state.restaurant?.let {
         Surface(
             modifier = Modifier

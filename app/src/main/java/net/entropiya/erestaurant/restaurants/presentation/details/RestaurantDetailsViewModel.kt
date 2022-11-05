@@ -6,11 +6,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import net.entropiya.erestaurant.restaurants.data.RestaurantsRepository
+import javax.inject.Inject
 
-class RestaurantDetailsViewModel(stateHandle: SavedStateHandle) : ViewModel() {
-    private val repository = RestaurantsRepository()
+@HiltViewModel
+class RestaurantDetailsViewModel @Inject constructor(
+    stateHandle: SavedStateHandle,
+    private val repository: RestaurantsRepository,
+) : ViewModel() {
+
     private var _state by mutableStateOf(RestaurantDetailsScreenState())
     val state: RestaurantDetailsScreenState
         get() = _state
